@@ -1,0 +1,136 @@
+{% extends 'base.html' %} {% block pagetitle %} AI Engine {% endblock pagetitle %} {% block body %}
+<div>
+    <div class="container">
+        <!-- For demo purpose -->
+        <div class="row mb-5 text-center text-white">
+            <div class="col-lg-10 mx-auto">
+                <h1 class="display-4" style="padding-top: 2%;font-weight: 400;color: rgb(4, 54, 4);"><b>🍀AI Engine🍀</b></h1>
+                <p class="lead" style="font-weight: 500;color: black;">Let AI Engine Will Help You To Detect Disease</p>
+            </div>
+        </div>
+        <!-- End -->
+        <div class="row ">
+            <div class="col mx-auto">
+                <div class="p-5 bg-white shadow rounded-lg" style="height: 95%;">
+
+                    <h5><b>Why is it necessary to detect disease in plant ?</b></h5>
+                    <p>Plant diseases affect the growth of their respective species. In addition, some research gaps are identified from which to obtain greater transparency for detecting diseases in plants, even before their symptoms appear clearly. diagnosis
+                        is one of the most important aspects of a plant pathologist's training. Without proper identification of the disease and the disease-causing agent, disease control measures can be a waste of time and money and can lead to further
+                        plant losses. Proper disease diagnosis is necessary.
+                    </p>
+                </div>
+            </div>
+            <div class="col mx-auto">
+                <div class="p-5 bg-white shadow rounded-lg" style="height: 95%;"><img src="https://www.pngjoy.com/pngl/250/4840262_plants-png-indoors-tropical-plant-png-hd-png.png " height="300" alt="" width="200" class="d-block mx-auto mb-4 rounded-pill">
+
+                    <!-- Default bootstrap file upload-->
+
+                    <form action="/submit" method="POST" enctype="multipart/form-data">
+                        <div class="custom-file overflow-hidden mb-4">
+                            <input type="file" id="actual-btn" hidden name="image" />
+                            <label for="actual-btn">Choose File</label>
+                            <span id="file-chosen">No file chosen</span>
+                        </div>
+
+                        <!-- Capture button -->
+                        <button id="capture-btn" type="button" class="btn btn-outline-success">Capture</button>
+                        <span id="capture-info"></span>
+
+                        <!-- Video element for live stream -->
+                        <video id="live-stream" autoplay style="display: none;"></video>
+
+                        <!-- Image preview -->
+                        <img id="captured-image" src="" alt="Captured Image" style="display: none; max-width: 100%;">
+
+                        <h6 class="text-center mb-4 text-muted">
+                            Simply upload your plant's leaf image or capture using the camera.
+                        </h6>
+
+                        <!-- Custom bootstrap upload file-->
+                        <center>
+                            <a class="mx-2"><button type="submit" class="btn btn-outline-success">Submit</button></a>
+                        </center>
+                    </form>
+                    <!-- End -->
+
+                </div>
+            </div>
+            <div class="col mx-auto">
+                <div class="p-5 bg-white shadow rounded-lg" style="height: 95%;">
+                    <h5><b>Prevent Plant Disease follow below steps:</b></h5>
+                    <ol>
+                        <li>Follow Good Sanitation Practices.</li>
+                        <li>Fertilize to Keep Your Plants Healthy.</li>
+                        <li>Inspect Plants for Diseases Before You Bring Them Home.</li>
+                        <li>Allow the Soil to Warm Before Planting.</li>
+                        <li>Ensure a Healthy Vegetable Garden By Rotating Crops.</li>
+                        <li>Provide Good Air Circulation</li>
+                        <li>Remove Diseased Stems and Foliage</li>
+                    </ol>
+                    <a target="_blank" href="https://www.thespruce.com/prevent-plant-diseases-in-your-garden-2539511" class="mx-2"><button type="button" class="btn btn-outline-success">More info</button></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const actualBtn = document.getElementById('actual-btn');
+    const fileChosen = document.getElementById('file-chosen');
+    const captureBtn = document.getElementById('capture-btn');
+    const captureInfo = document.getElementById('capture-info');
+    const liveStream = document.getElementById('live-stream');
+    const capturedImage = document.getElementById('captured-image');
+
+    // Function to handle capture button click
+    captureBtn.addEventListener('click', function() {
+        captureInfo.textContent = 'Capturing image...';
+
+        // Use HTML5 getUserMedia API to access the camera
+        navigator.mediaDevices.getUserMedia({
+                video: true
+            })
+            .then(function(stream) {
+                // Attach stream to video element
+                liveStream.style.display = 'block';
+                liveStream.srcObject = stream;
+
+                // Play video stream
+                liveStream.play();
+
+                // Capture image automatically after 5 seconds
+                setTimeout(captureImage, 5000);
+
+                // Function to capture image from video stream
+                function captureImage() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = liveStream.videoWidth;
+                    canvas.height = liveStream.videoHeight;
+                    const context = canvas.getContext('2d');
+                    context.drawImage(liveStream, 0, 0, canvas.width, canvas.height);
+                    const imageUrl = canvas.toDataURL('image/png');
+                    capturedImage.src = imageUrl;
+                    capturedImage.style.display = 'block';
+
+                    // Stop video stream
+                    stream.getTracks().forEach(track => track.stop());
+                    liveStream.style.display = 'none';
+
+                    // Set the chosen file name and display captured info
+                    fileChosen.textContent = 'Captured Image';
+                    captureInfo.textContent = 'Image captured successfully';
+                }
+            })
+            .catch(function(error) {
+                console.error('Error accessing camera:', error);
+                captureInfo.textContent = 'Error accessing camera';
+            });
+    });
+
+    // Update file chosen text when file input changes
+    actualBtn.addEventListener('change', function() {
+        fileChosen.textContent = this.files[0].name;
+    });
+</script>
+
+{% endblock body %}
